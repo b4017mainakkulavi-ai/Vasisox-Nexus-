@@ -1,0 +1,6 @@
+{
+  "name": "Vasisox Nexus AI",
+  "description": "Premium AI-powered personal productivity, study planner, task manager, and finance management dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

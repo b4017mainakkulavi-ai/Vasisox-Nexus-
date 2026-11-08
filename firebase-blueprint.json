@@ -1,0 +1,173 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile and sync metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "UserAppState": {
+      "title": "UserAppState",
+      "description": "Synchronized personal dashboard state for multi-device sync",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "tasks": { "type": "array" },
+        "subjects": { "type": "array" },
+        "schedule": { "type": "array" },
+        "revisions": { "type": "array" },
+        "exams": { "type": "array" },
+        "transactions": { "type": "array" },
+        "stats": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "updatedAt"]
+    },
+    "UserTask": {
+      "title": "UserTask",
+      "description": "Individual task item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "priority": { "type": "string", "enum": ["urgent", "high", "medium", "low"] },
+        "category": { "type": "string", "enum": ["Study", "Work", "Personal", "Finance", "Health"] },
+        "dueDate": { "type": "string" },
+        "dueTime": { "type": "string" },
+        "estimatedMinutes": { "type": "number" },
+        "completed": { "type": "boolean" },
+        "completedAt": { "type": "string" },
+        "subtasks": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "title", "priority", "category", "completed"]
+    },
+    "StudySubject": {
+      "title": "StudySubject",
+      "description": "Study subject entity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 200 },
+        "code": { "type": "string", "maxLength": 50 },
+        "color": { "type": "string" },
+        "targetWeeklyHours": { "type": "number" },
+        "completedHours": { "type": "number" },
+        "syllabusProgress": { "type": "number" },
+        "topics": { "type": "array" }
+      },
+      "required": ["id", "userId", "name", "code"]
+    },
+    "StudyScheduleItem": {
+      "title": "StudyScheduleItem",
+      "description": "Daily scheduled study session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "topicTitle": { "type": "string" },
+        "day": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "userId", "subjectName", "day", "startTime", "endTime"]
+    },
+    "RevisionItem": {
+      "title": "RevisionItem",
+      "description": "Spaced repetition revision tracker item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "topic": { "type": "string" },
+        "currentStage": { "type": "number" },
+        "lastReviewedDate": { "type": "string" },
+        "nextReviewDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["due", "upcoming", "mastered"] }
+      },
+      "required": ["id", "userId", "subjectName", "topic", "currentStage", "nextReviewDate"]
+    },
+    "ExamItem": {
+      "title": "ExamItem",
+      "description": "Exam countdown item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "room": { "type": "string" },
+        "targetScore": { "type": "string" },
+        "importance": { "type": "string" }
+      },
+      "required": ["id", "userId", "title", "subject", "date"]
+    },
+    "FinanceTransaction": {
+      "title": "FinanceTransaction",
+      "description": "Financial income and expense transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "title": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "userId", "type", "title", "category", "amount", "date"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account profile"
+    },
+    "/users/{userId}/syncState/nexus": {
+      "schema": "UserAppState",
+      "description": "Synchronized personal dashboard state across all devices"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "UserTask",
+      "description": "User tasks collection"
+    },
+    "/users/{userId}/subjects/{subjectId}": {
+      "schema": "StudySubject",
+      "description": "Study subjects and progress"
+    },
+    "/users/{userId}/schedule/{scheduleId}": {
+      "schema": "StudyScheduleItem",
+      "description": "Daily study schedule items"
+    },
+    "/users/{userId}/revisions/{revisionId}": {
+      "schema": "RevisionItem",
+      "description": "Spaced repetition revision tracker"
+    },
+    "/users/{userId}/exams/{examId}": {
+      "schema": "ExamItem",
+      "description": "Exam countdown and target score schedule"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "FinanceTransaction",
+      "description": "Financial income and expense tracking records"
+    }
+  }
+}
